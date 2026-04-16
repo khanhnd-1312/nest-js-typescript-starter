@@ -38,7 +38,7 @@ Swagger UI: `http://localhost:3000/api/docs`
 ## Available Commands
 
 ```bash
-make help            # Show all command
+make help            # Show all commands
 make up              # Start all dependent containers (include database)
 make down            # Stop all dependent containers (include database)
 make dev             # Run app in dev mode

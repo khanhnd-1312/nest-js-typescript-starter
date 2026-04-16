@@ -19,4 +19,4 @@
 - [ ] Create/Update UTs
 - [ ] `make test` pass
 - [ ] Have no error when linting (`make sun-lint`)
-- [ ] Migration have to be created when any entity changed
+- [ ] Migrations have to be created when any entity changes
