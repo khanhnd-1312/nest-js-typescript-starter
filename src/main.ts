@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { I18nValidationPipe } from 'nestjs-i18n';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,7 +22,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(
-    new ValidationPipe({
+    new I18nValidationPipe({
       whitelist: true, // Automatically remove properties that do not have any decorators
       forbidNonWhitelisted: true, // Throw an error if non-whitelisted properties are present
       transform: true, // Automatically transform payloads to be objects typed according to their DTO classes

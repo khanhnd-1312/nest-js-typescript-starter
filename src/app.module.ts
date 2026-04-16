@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -25,6 +27,23 @@ import { AppService } from './app.service';
         migrationsRun: false,
       }),
       inject: [ConfigService],
+    }),
+
+    // Configure internationalization (i18n)
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true, // Hot-reload in development
+      },
+      resolvers: [
+        new QueryResolver(['lang']), // ?lang=en
+        new HeaderResolver(['lang']), // lang: en in headers
+      ],
+      typesOutputPath: path.join(
+        __dirname,
+        '../src/generated/i18n.generated.ts',
+      ),
     }),
   ],
   controllers: [AppController],
