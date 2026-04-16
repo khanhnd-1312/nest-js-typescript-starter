@@ -1,0 +1,35 @@
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Set up Swagger documentation in non-production environments
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('RealWorld API')
+      .setDescription('NestJS RealWorld API implementation')
+      .setVersion('1.0')
+      .addBearerAuth() // Enable Bearer authentication
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
+
+  app.setGlobalPrefix('api');
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Automatically remove properties that do not have any decorators
+      forbidNonWhitelisted: false,
+      transform: true, // Automatically transform payloads to be objects typed according to their DTO classes
+    }),
+  );
+
+  await app.listen(process.env.PORT ?? 3000);
+}
+
+bootstrap();
