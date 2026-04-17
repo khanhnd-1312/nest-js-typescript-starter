@@ -40,10 +40,6 @@ import { AppService } from './app.service';
         new QueryResolver(['lang']), // ?lang=en
         new HeaderResolver(['lang']), // lang: en in headers
       ],
-      typesOutputPath: path.join(
-        __dirname,
-        '../src/generated/i18n.generated.ts',
-      ),
     }),
   ],
   controllers: [AppController],
