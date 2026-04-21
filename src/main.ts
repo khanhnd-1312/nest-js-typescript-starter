@@ -7,6 +7,8 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api');
+
   // Set up Swagger documentation in non-production environments
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
@@ -19,7 +21,7 @@ async function bootstrap() {
           name: 'Authorization',
           in: 'header',
           description:
-            'JWT Authorization header using the Bearer scheme. Example: "Authorization: Token {token}"',
+            'JWT token should be provided in the format: "Token <token>"',
         },
         'Authorization',
       )
@@ -28,8 +30,6 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
   }
-
-  app.setGlobalPrefix('api');
 
   app.useGlobalPipes(
     new I18nValidationPipe({
