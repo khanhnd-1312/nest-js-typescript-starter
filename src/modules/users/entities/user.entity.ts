@@ -20,11 +20,11 @@ export class User {
   @Column()
   username: string;
 
-  @Column({ nullable: true })
-  bio: string;
+  @Column({ type: 'text', nullable: true })
+  bio: string | null;
 
-  @Column({ nullable: true })
-  image: string;
+  @Column({ type: 'varchar', nullable: true })
+  image: string | null;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -45,8 +45,8 @@ export class AuthService {
         email: user.email,
         username: user.username,
         token,
-        bio: null,
-        image: null,
+        bio: user.bio,
+        image: user.image,
       },
     };
   }
@@ -80,8 +80,8 @@ export class AuthService {
         email: user.email,
         username: user.username,
         token,
-        bio: null,
-        image: null,
+        bio: user.bio,
+        image: user.image,
       },
     };
   }

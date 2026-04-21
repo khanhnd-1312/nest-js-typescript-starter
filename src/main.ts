@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,7 +13,16 @@ async function bootstrap() {
       .setTitle('RealWorld API')
       .setDescription('NestJS RealWorld API implementation')
       .setVersion('1.0')
-      .addBearerAuth() // Enable Bearer authentication
+      .addApiKey(
+        {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header',
+          description:
+            'JWT Authorization header using the Bearer scheme. Example: "Authorization: Token {token}"',
+        },
+        'Authorization',
+      )
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
@@ -52,11 +62,14 @@ async function bootstrap() {
   );
 
   // CORS
+  const configService = app.get(ConfigService);
+  const originStr = configService.get<string>('CORS_ORIGIN');
+  const origins = originStr?.split(',') || '*';
   app.enableCors({
-    origin: '*',
+    origin: origins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Accept, Authorization',
-    preflightContinue: false,
+    allowedHeaders: 'Content-Type, Accept, Authorization, Lang',
+    credentials: true,
     optionsSuccessStatus: 204,
   });
 

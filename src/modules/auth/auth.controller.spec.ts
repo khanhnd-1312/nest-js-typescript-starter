@@ -48,11 +48,10 @@ describe('AuthController', () => {
       password: 'plain-password',
     };
     const loginResult = {
-      accessToken: 'signed-jwt',
       user: {
-        id: 'user-1',
         email: dto.email,
         username: 'tester',
+        token: 'signed-jwt',
       },
     };
     authService.login.mockResolvedValue(loginResult);

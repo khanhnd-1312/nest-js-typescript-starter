@@ -1,16 +1,13 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
-  @ApiProperty({ example: 'user@example.com' })
   @IsNotEmpty({
     message: i18nValidationMessage('common.validation.IS_NOT_EMPTY'),
   })
   @IsEmail({}, { message: i18nValidationMessage('common.validation.IS_EMAIL') })
   email: string;
 
-  @ApiProperty({ example: 'strongpassword123', minLength: 6 })
   @IsNotEmpty({
     message: i18nValidationMessage('common.validation.IS_NOT_EMPTY'),
   })
@@ -20,7 +17,6 @@ export class RegisterDto {
   })
   password: string;
 
-  @ApiProperty({ example: 'johndoe', required: false })
   @IsNotEmpty({
     message: i18nValidationMessage('common.validation.IS_NOT_EMPTY'),
   })
