@@ -1,3 +1,8 @@
 {
-  "HELLO_WORLD": "Xin chào thế giới!"
+  "validation": {
+    "IS_NOT_EMPTY": "{property} không được để trống",
+    "IS_EMAIL": "{property} phải là địa chỉ email hợp lệ",
+    "IS_STRING": "{property} phải là chuỗi ký tự",
+    "MIN_LENGTH": "{property} phải có ít nhất {constraints.0} ký tự"
+  }
 }

@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { I18nValidationPipe } from 'nestjs-i18n';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -23,13 +23,46 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new I18nValidationPipe({
-      whitelist: true, // Automatically remove properties that do not have any decorators
-      forbidNonWhitelisted: true, // Throw an error if non-whitelisted properties are present
-      transform: true, // Automatically transform payloads to be objects typed according to their DTO classes
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
+  app.useGlobalFilters(
+    new I18nValidationExceptionFilter({
+      errorHttpStatusCode: 422,
+
+      // Format validation errors as { field1: [error1, error2], field2: [error1, error2] }
+      errorFormatter: (errors) => {
+        return errors.reduce(
+          (acc, error) => {
+            acc[error.property] = Object.values(error.constraints || {});
+            return acc;
+          },
+          {} as Record<string, string[]>,
+        );
+      },
+
+      // Format the final response as { errors: { field1: [error1, error2], field2: [error1, error2] } }
+      responseBodyFormatter: (_, __, formattedErrors) => ({
+        errors: formattedErrors,
+      }),
+    }),
+  );
+
+  // CORS
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
+
   await app.listen(process.env.PORT ?? 3000);
+
+  return app;
 }
 
 bootstrap();
