@@ -7,8 +7,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import type { App as SupertestApp } from 'supertest/types';
 import { AuthController } from '../src/modules/auth/auth.controller';
-import { UserController } from '../src/modules/auth/user.controller';
+import { UserController } from '../src/modules/users/user.controller';
 import { AuthService } from '../src/modules/auth/auth.service';
+import { UsersService } from '../src/modules/users/users.service';
 import { JwtAuthGuard } from '../src/modules/auth/guards/jwt-auth.guard';
 
 describe('Auth (e2e)', () => {
@@ -28,6 +29,10 @@ describe('Auth (e2e)', () => {
     login: jest.fn(),
   };
 
+  const usersService = {
+    findById: jest.fn(),
+  };
+
   const jwtAuthGuard = {
     canActivate: jest.fn((context: ExecutionContext) => {
       if (!isAuthorized) {
@@ -45,6 +50,7 @@ describe('Auth (e2e)', () => {
 
   beforeEach(async () => {
     isAuthorized = true;
+    usersService.findById.mockResolvedValue(authenticatedUser);
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       controllers: [AuthController, UserController],
@@ -53,6 +59,10 @@ describe('Auth (e2e)', () => {
         {
           provide: AuthService,
           useValue: authService,
+        },
+        {
+          provide: UsersService,
+          useValue: usersService,
         },
       ],
     })

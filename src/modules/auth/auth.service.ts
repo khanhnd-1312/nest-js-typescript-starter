@@ -4,11 +4,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { I18nContext, I18nService } from 'nestjs-i18n';
+import { I18nService } from 'nestjs-i18n';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UserResponseDto } from '../users/dto/user-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,12 +21,10 @@ export class AuthService {
 
   async register(dto: RegisterDto) {
     // Check if email already exists
-    const existing = await this.usersService.findByEmail(dto.email);
+    const existing = await this.usersService.checkUserExistsByEmail(dto.email);
     if (existing) {
       throw new ConflictException(
-        this.i18n.translate('auth.EMAIL_ALREADY_EXISTS', {
-          lang: I18nContext.current()?.lang ?? 'en',
-        }),
+        this.i18n.translate('auth.EMAIL_ALREADY_EXISTS'),
       );
     }
 
@@ -40,25 +39,15 @@ export class AuthService {
     });
 
     const token = this.jwtService.sign({ sub: user.id, email: user.email });
-    return {
-      user: {
-        email: user.email,
-        username: user.username,
-        token,
-        bio: user.bio,
-        image: user.image,
-      },
-    };
+    return UserResponseDto.build(user, token);
   }
 
   async login(dto: LoginDto) {
     // Find the user by email
-    const user = await this.usersService.findByEmail(dto.email);
+    const user = await this.usersService.findByEmailOrNull(dto.email);
     if (!user) {
       throw new UnauthorizedException(
-        this.i18n.translate('auth.INVALID_CREDENTIALS', {
-          lang: I18nContext.current()?.lang ?? 'en',
-        }),
+        this.i18n.translate('auth.INVALID_CREDENTIALS'),
       );
     }
 
@@ -66,23 +55,13 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException(
-        this.i18n.translate('auth.INVALID_CREDENTIALS', {
-          lang: I18nContext.current()?.lang ?? 'en',
-        }),
+        this.i18n.translate('auth.INVALID_CREDENTIALS'),
       );
     }
 
     // Create JWT payload and sign token
     const token = this.jwtService.sign({ sub: user.id, email: user.email });
 
-    return {
-      user: {
-        email: user.email,
-        username: user.username,
-        token,
-        bio: user.bio,
-        image: user.image,
-      },
-    };
+    return UserResponseDto.build(user, token);
   }
 }

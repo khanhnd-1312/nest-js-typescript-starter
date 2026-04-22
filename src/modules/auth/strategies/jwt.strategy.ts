@@ -2,9 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { I18nService } from 'nestjs-i18n';
 import { UsersService } from '../../users/users.service';
 import type { AuthenticatedUser } from '../types';
-import { I18nContext, I18nService } from 'nestjs-i18n';
 
 interface JwtPayload {
   sub: string;
@@ -26,16 +26,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<AuthenticatedUser> {
-    const user = await this.usersService.findById(payload.sub);
+    const user = await this.usersService.findByIdOrNull(payload.sub);
 
     if (!user) {
       throw new UnauthorizedException(
-        this.i18n.translate('auth.USER_NOT_FOUND', {
-          lang: I18nContext.current()?.lang ?? 'en',
-        }),
+        this.i18n.translate('user.USER_NOT_FOUND'),
       );
     }
-
     return {
       id: user.id,
       email: user.email,

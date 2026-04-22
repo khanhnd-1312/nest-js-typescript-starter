@@ -1,4 +1,5 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ClassSerializerInterceptor } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { AppModule } from './app.module';
@@ -21,7 +22,7 @@ async function bootstrap() {
           name: 'Authorization',
           in: 'header',
           description:
-            'JWT token should be provided in the format: "Token <token>"',
+            'JWT token should be provided in the format: "Token your_token_here"',
         },
         'Authorization',
       )
@@ -30,6 +31,8 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
   }
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalPipes(
     new I18nValidationPipe({
@@ -41,7 +44,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(
     new I18nValidationExceptionFilter({
-      errorHttpStatusCode: 422,
+      errorHttpStatusCode: 400,
 
       // Format validation errors as { field1: [error1, error2], field2: [error1, error2] }
       errorFormatter: (errors) => {
