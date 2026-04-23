@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { I18nService } from 'nestjs-i18n';
 
@@ -35,6 +36,28 @@ export class UsersService {
 
   async create(data: Partial<User>): Promise<User> {
     const user = this.usersRepository.create(data);
+    return this.usersRepository.save(user);
+  }
+
+  async update(id: string, data: Partial<User>): Promise<User> {
+    const user = await this.findById(id);
+
+    // If password is being updated, hash it before saving
+    if (data.password) {
+      const salt = await bcrypt.genSalt(10);
+      data.password = await bcrypt.hash(data.password, salt);
+    }
+
+    // Remove undefined or null fields to avoid overwriting existing data with null/undefined
+    Object.keys(data).forEach((key: keyof User) => {
+      if (data[key] === undefined || data[key] === null) {
+        delete data[key];
+      }
+    });
+
+    // Assign the new data to the user entity
+    Object.assign(user, data);
+
     return this.usersRepository.save(user);
   }
 }

@@ -47,7 +47,7 @@ describe('UserController', () => {
   it('me queries DB and returns user in RealWorld format', async () => {
     usersService.findById.mockResolvedValue(dbUser);
 
-    const result = await controller.me(authenticatedUser);
+    const result = await controller.getCurrentUser(authenticatedUser);
 
     expect(usersService.findById).toHaveBeenCalledWith(authenticatedUser.id);
     expect(result).toEqual(UserResponseDto.build(dbUser));
