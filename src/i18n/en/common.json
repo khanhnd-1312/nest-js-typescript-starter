@@ -1,3 +1,8 @@
 {
-  "HELLO_WORLD": "Hello World!"
+  "validation": {
+    "IS_NOT_EMPTY": "{property} should not be empty",
+    "IS_EMAIL": "{property} must be a valid email address",
+    "IS_STRING": "{property} must be a string",
+    "MIN_LENGTH": "{property} must be at least {constraints.0} characters long"
+  }
 }
