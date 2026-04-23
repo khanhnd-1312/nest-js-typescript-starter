@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { I18nService } from 'nestjs-i18n';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -39,8 +44,18 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async update(id: string, data: Partial<User>): Promise<User> {
+  async update(id: string, data: UpdateUserDto): Promise<User> {
     const user = await this.findById(id);
+
+    // Check if email already exists
+    if (data.email && data.email !== user.email) {
+      const existing = await this.checkUserExistsByEmail(data.email);
+      if (existing) {
+        throw new ConflictException(
+          this.i18n.translate('auth.EMAIL_ALREADY_EXISTS'),
+        );
+      }
+    }
 
     // If password is being updated, hash it before saving
     if (data.password) {
@@ -48,9 +63,9 @@ export class UsersService {
       data.password = await bcrypt.hash(data.password, salt);
     }
 
-    // Remove undefined or null fields to avoid overwriting existing data with null/undefined
-    Object.keys(data).forEach((key: keyof User) => {
-      if (data[key] === undefined || data[key] === null) {
+    // Remove only undefined fields so explicit null values can clear nullable columns
+    Object.keys(data).forEach((key: keyof UpdateUserDto) => {
+      if (data[key] === undefined) {
         delete data[key];
       }
     });
