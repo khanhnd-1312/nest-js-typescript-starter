@@ -1,3 +1,4 @@
 {
-  "USER_NOT_FOUND": "User not found"
+  "USER_NOT_FOUND": "User not found",
+  "FAILED_TO_UPDATE_USER": "Failed to update user"
 }

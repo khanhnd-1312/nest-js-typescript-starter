@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -73,6 +74,12 @@ export class UsersService {
     // Assign the new data to the user entity
     Object.assign(user, data);
 
-    return this.usersRepository.save(user);
+    try {
+      return await this.usersRepository.save(user);
+    } catch {
+      throw new BadRequestException(
+        this.i18n.translate('user.FAILED_TO_UPDATE_USER'),
+      );
+    }
   }
 }
