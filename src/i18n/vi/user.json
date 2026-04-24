@@ -1,3 +1,4 @@
 {
-  "USER_NOT_FOUND": "Người dùng không tồn tại"
+  "USER_NOT_FOUND": "Người dùng không tồn tại",
+  "FAILED_TO_UPDATE_USER": "Cập nhật người dùng thất bại"
 }

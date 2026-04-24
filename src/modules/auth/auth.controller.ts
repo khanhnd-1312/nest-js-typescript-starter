@@ -1,22 +1,19 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { UserResponseDto } from '../users/dto/user-response.dto';
 
 @ApiTags('Auth')
 @Controller('users')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOkResponse({ type: UserResponseDto })
   @Post()
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
-  @ApiOkResponse({ type: UserResponseDto })
   @Post('login')
   @HttpCode(HttpStatus.OK) // Default is 201 for POST, but we want 200 for login
   login(@Body() dto: LoginDto) {
