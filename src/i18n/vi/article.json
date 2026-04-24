@@ -1,0 +1,6 @@
+{
+  "ARTICLE_NOT_FOUND": "Bài viết không tồn tại",
+  "FORBIDDEN": "Bạn không phải tác giả của bài viết này",
+  "CREATE_FAILED": "Tạo bài viết thất bại",
+  "UPDATE_FAILED": "Cập nhật bài viết thất bại"
+}
