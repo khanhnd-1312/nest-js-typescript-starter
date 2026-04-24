@@ -3,6 +3,9 @@
     "IS_NOT_EMPTY": "{property} không được để trống",
     "IS_EMAIL": "{property} phải là địa chỉ email hợp lệ",
     "IS_STRING": "{property} phải là chuỗi ký tự",
-    "MIN_LENGTH": "{property} phải có ít nhất {constraints.0} ký tự"
+    "IS_ARRAY": "{property} phải là một mảng",
+    "IS_INT": "{property} phải là một số nguyên",
+    "MIN_LENGTH": "{property} phải có ít nhất {constraints.0} ký tự",
+    "MIN": "{property} phải có giá trị lớn hơn hoặc bằng {constraints.0}"
   }
 }

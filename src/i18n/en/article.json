@@ -1,0 +1,6 @@
+{
+  "ARTICLE_NOT_FOUND": "Article not found",
+  "FORBIDDEN": "You are not the author of this article",
+  "CREATE_FAILED": "Failed to create article",
+  "UPDATE_FAILED": "Failed to update article"
+}
